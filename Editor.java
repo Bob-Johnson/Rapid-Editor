@@ -9,6 +9,7 @@ import java.util.*;
 import javax.swing.text.*;
 import java.text.*;
 
+
 public class Editor extends JFrame implements ActionListener
 {
 	public static Editor e;
@@ -22,6 +23,7 @@ public class Editor extends JFrame implements ActionListener
 	
 	JMenu FILE = new JMenu("File");
 	JMenu EDIT = new JMenu("Edit");
+	JMenu SEARCH = new JMenu("Search");
 	JMenu HELP = new JMenu("Help");
 
 	JMenuItem NEWFILE = new JMenuItem("New");
@@ -38,6 +40,8 @@ public class Editor extends JFrame implements ActionListener
 	JMenuItem SELECTEDIT = new JMenuItem("Select All");
 	JMenuItem TIMEDIT = new JMenuItem("Time/Date");
 
+	JMenuItem FINDSEARCH = new JMenuItem("Find");
+	JMenuItem FINDNEXTSEARCH = new JMenuItem("Find Next");
 	JMenuItem ABOUTHELP = new JMenuItem("About");
 
 	JPopupMenu POPUP = new JPopupMenu();
@@ -45,7 +49,7 @@ public class Editor extends JFrame implements ActionListener
 	JMenuItem COPYPOPUP = new JMenuItem("Copy");
 	JMenuItem PASTEPOPUP = new JMenuItem("Paste");
 	JMenuItem DELETEPOPUP = new JMenuItem("Delete");
-	JMenuItem SELECTPOPUP = new JMenuItem("Select All");
+	JMenuItem SELECTPOPUP = new JMenuItem("Select All");	
 
 	UndoManager undo = new UndoManager();
 	UndoAction undoAction = new UndoAction();
@@ -115,6 +119,7 @@ public class Editor extends JFrame implements ActionListener
 		//ADDING MENUS TO THE MAIN MENUBAR 
 		mb.add(FILE);
 		mb.add(EDIT);
+		mb.add(SEARCH);
 		mb.add(HELP);	
 		
 		//ADDING MENUITEMS TO THE FILE MENU 
@@ -135,6 +140,10 @@ public class Editor extends JFrame implements ActionListener
 		EDIT.add(SELECTEDIT);
 		EDIT.add(TIMEDIT);
 		
+		
+		//ADDING MENUITEMS TO THE SEARCH MENU
+		SEARCH.add(FINDSEARCH);
+		SEARCH.add(FINDNEXTSEARCH);
 
 		//ADDING MENUITEM TO THE HELP MENU
 		HELP.add(ABOUTHELP);
@@ -169,6 +178,10 @@ public class Editor extends JFrame implements ActionListener
 		SELECTEDIT.setMnemonic(KeyEvent.VK_A);
 		TIMEDIT.setMnemonic(KeyEvent.VK_D);
 
+		//SETTING SHORTCUT KEYS OF MENUITEMS IN THE SEARCH MENU
+		FINDSEARCH.setMnemonic(KeyEvent.VK_F);
+		FINDNEXTSEARCH.setMnemonic(KeyEvent.VK_N);
+
 		//SETTING SHORTCUT KEYS OF MENUITEM IN THE HELP MENU
 		ABOUTHELP.setMnemonic(KeyEvent.VK_A);
 		
@@ -178,7 +191,6 @@ public class Editor extends JFrame implements ActionListener
 		PASTEPOPUP.setMnemonic(KeyEvent.VK_P);
 		DELETEPOPUP.setMnemonic(KeyEvent.VK_D);
 		SELECTPOPUP.setMnemonic(KeyEvent.VK_A);
-
 		//SETTING ACCELERATOR KEYS OF SOME MENUITEMS IN THE EDIT MENU
 		CUTEDIT.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,ActionEvent.CTRL_MASK));
 		COPYEDIT.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
@@ -199,7 +211,11 @@ public class Editor extends JFrame implements ActionListener
 		DELETEDIT.addActionListener(this);
 		SELECTEDIT.addActionListener(this);
 		TIMEDIT.addActionListener(this);
-		
+
+		//ADDING LISTENERS TO THE MENUITEMS IN SEARCH MENU
+		FINDSEARCH.addActionListener(this);
+		FINDNEXTSEARCH.addActionListener(this);
+
 		//ADDING LISTENERS TO THE MENUITEM IN HELP MENU
 		ABOUTHELP.addActionListener(this);
 		
@@ -209,7 +225,6 @@ public class Editor extends JFrame implements ActionListener
 		PASTEPOPUP.addActionListener(this);
 		DELETEPOPUP.addActionListener(this);
 		SELECTPOPUP.addActionListener(this);
-
 
 		//ADDING MOUSELISTENER TO RIGHT CLICK FOR THE POPUPLISTENER
 		text.addMouseListener(new MouseAdapter()
@@ -327,7 +342,6 @@ public class Editor extends JFrame implements ActionListener
 		{
 			text.replaceSelection(null);
 		}
-			
 		//ACTION FOR SELECTALL MENU OPTION OF EDIT MENU AND POPUPMENU
 		if ((e.getSource()==SELECTEDIT)||(e.getSource()==SELECTPOPUP))
 		{
@@ -344,6 +358,31 @@ public class Editor extends JFrame implements ActionListener
 			text.insert(dd,text.getCaretPosition());
 		}
 
+		//ACTION FOR FIND MENU OPTION OF SEARCH MENU
+		if (e.getSource()==FINDSEARCH)
+		{
+			wholeText=text.getText();
+			findString =JOptionPane.showInputDialog(null, "Find What", "Find",
+JOptionPane.INFORMATION_MESSAGE);
+
+			ind = wholeText.indexOf(findString,0);
+			text.setCaretPosition(ind);
+			text.setSelectionStart(ind);
+			text.setSelectionEnd(ind+findString.length());
+		}
+		
+		//ACTION FOR FIND NEXT MENU OPTION OF SEARCH MENU
+		if (e.getSource()==FINDNEXTSEARCH)
+		{
+			wholeText= text.getText();
+			findString = JOptionPane.showInputDialog(null, "Find What","Find Next",
+JOptionPane.INFORMATION_MESSAGE);
+			ind = wholeText.indexOf(findString, text.getCaretPosition());
+			text.setCaretPosition(ind);
+			text.setSelectionStart(ind);
+			text.setSelectionEnd(ind+findString.length());
+		}
+	
 		//ACTION FOR ABOUT MENU OPTION OF HELP MENU
 		if (e.getSource()==ABOUTHELP)
 		{
