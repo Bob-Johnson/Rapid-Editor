@@ -9,7 +9,6 @@ import java.util.*;
 import javax.swing.text.*;
 import java.text.*;
 
-
 public class Editor extends JFrame implements ActionListener
 {
 	public static Editor e;
